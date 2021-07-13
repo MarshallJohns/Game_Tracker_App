@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, SafeAreaView, Alert } from 'react-native';
 
 
+
+
 export default function App() {
   const phases = ['Command', 'Movement', 'Psychic', 'Shooting', 'Charge', 'Fight', 'Morale'];
   // *Victory Points
@@ -40,15 +42,17 @@ export default function App() {
   const handleBlueTurn = () => {
     setPlayerTurn('Blue');
     setBlueTurnNum(blueTurnNum + 1)
+    setBlueCP(blueCp + 1)
   };
   const handleRedTurn = () => {
     setPlayerTurn('Red');
     setRedTurnNum(redTurnNum + 1)
+    setRedCP(redCp + 1)
   };
 
   const handlePhase = () => {
     if (phase === phases.length - 1) {
-      redTurnNum === blueTurnNum && battleRound < 5 ? setBattleRound(battleRound + 1) : null
+      redTurnNum === blueTurnNum ? setBattleRound(battleRound + 1) : null
       setPhase(0)
       playerTurn === 'Red' ? handleBlueTurn() : handleRedTurn()
     } else {
@@ -63,17 +67,12 @@ export default function App() {
       [
         {
           text: "Red Player",
-          onPress: () => {
-            setPlayerTurn('Red')
-            setRedTurnNum(1)
-          },
+          onPress: () => handleRedTurn()
         },
         {
           text: "Blue player",
-          onPress: () => {
-            setPlayerTurn('Blue')
-            setBlueTurnNum(1)
-          },
+          onPress: () => handleBlueTurn()
+
         }
       ]
     );
@@ -83,50 +82,58 @@ export default function App() {
     handlePlayerAlert()
   }, [])
 
-  return (
-    <SafeAreaView style={styles.col}>
+  while (battleRound <= 5) {
+    return (
+      <SafeAreaView style={styles.col}>
 
-      <View>
-        <Text>Battle Round {battleRound}</Text>
-        <Text> {playerTurn} Player's {phases[phase]} Phase </Text>
-        <Button onPress={() => handlePhase()} title='Next Phase' />
-      </View>
-
-      <View style={styles.points}>
-        <View style={styles.col, styles.red}>
-          <Text>Red Player's Victory Points</Text>
-          <Text >{redPoints}</Text>
-          <View style={styles.row}>
-            <Button onPress={() => handleScore('red', '+')} title="+" />
-            <Button onPress={() => handleScore('red', '-')} title="-" />
-          </View>
-          <Text>Red Player's Command Points </Text>
-          <Text>{redCp}</Text>
-          <View style={styles.row}>
-            <Button onPress={() => handleCP('red', '+')} title="+" />
-            <Button onPress={() => handleCP('red', '-')} title="-" />
-          </View>
+        <View>
+          <Text style={styles.battleRound}> {redTurnNum === blueTurnNum ? 'Bottom of ' : 'Top of'} Battle Round {battleRound}</Text>
+          <Text> {playerTurn} Player's {phases[phase]} Phase </Text>
+          <Button onPress={() => handlePhase()} title='Next Phase' />
         </View>
 
-        <View style={styles.col, styles.blue}>
-          <Text>Blue Player's Victory Points</Text>
-          <Text>{bluePoints}</Text>
-          <View style={styles.row}>
-            <Button onPress={() => handleScore('blue', '+')} title="+" />
-            <Button onPress={() => handleScore('blue', '-')} title="-" />
+        <View style={styles.points}>
+          <View style={styles.col, styles.red}>
+            <Text>Red Player's Victory Points</Text>
+            <Text >{redPoints}</Text>
+            <View style={styles.row}>
+              <Button onPress={() => handleScore('red', '+')} title="+" />
+              <Button onPress={() => handleScore('red', '-')} title="-" />
+            </View>
+            <Text>Red Player's Command Points </Text>
+            <Text>{redCp}</Text>
+            <View style={styles.row}>
+              <Button onPress={() => handleCP('red', '+')} title="+" />
+              <Button onPress={() => handleCP('red', '-')} title="-" />
+            </View>
           </View>
-          <Text>Blue Player's Command Points </Text>
-          <Text>{blueCp}</Text>
-          <View style={styles.row}>
-            <Button onPress={() => handleCP('blue', '+')} title="+" />
-            <Button onPress={() => handleCP('blue', '-')} title="-" />
+
+          <View style={styles.col, styles.blue}>
+            <Text>Blue Player's Victory Points</Text>
+            <Text>{bluePoints}</Text>
+            <View style={styles.row}>
+              <Button onPress={() => handleScore('blue', '+')} title="+" />
+              <Button onPress={() => handleScore('blue', '-')} title="-" />
+            </View>
+            <Text>Blue Player's Command Points </Text>
+            <Text>{blueCp}</Text>
+            <View style={styles.row}>
+              <Button onPress={() => handleCP('blue', '+')} title="+" />
+              <Button onPress={() => handleCP('blue', '-')} title="-" />
+            </View>
           </View>
+
         </View>
 
-      </View>
+      </SafeAreaView>
+    )
+  };
 
-    </SafeAreaView>
-  );
+  return <SafeAreaView>
+    {redPoints > bluePoints ? <Text>Congratulations Red player you won</Text> : <Text> Congratulations Blue player you won</Text>}
+    <Button onPress={() => { }} title='Play again?' />
+
+  </SafeAreaView>
 }
 
 const styles = StyleSheet.create({
@@ -156,5 +163,8 @@ const styles = StyleSheet.create({
   red: {
     backgroundColor: 'red'
   },
+  battleRound: {
+    textAlign: 'center'
+  }
 
 });
